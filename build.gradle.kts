@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.dsl.TestOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
   applyFrom(rootProject.file("gradle/versions.gradle.kts"))
@@ -94,6 +95,8 @@ android {
     isCheckAllWarnings = true
     isWarningsAsErrors = true
     setLintConfig(rootProject.file("${project.rootDir}/config/lint/lint.xml"))
+    // TODO
+    disable("MissingRegistered")
   }
 
   // Add "debug.keystore" so developers can share APKs with same signatures locally
@@ -162,48 +165,58 @@ configurations.all {
     force(extra["supportAnnotations"])
     force(extra["multidex"])
     force(extra["multidexInstrumentation"])
+    // TODO
+    force("org.jacoco:org.jacoco.agent:0.7.4.201502262128")
+    force("org.jacoco:org.jacoco.ant:0.7.4.201502262128")
   }
 }
 
 dependencies {
-  compile(extra["design"])
-  compile(extra["cardviewv7"])
-  compile(extra["kotlinStdlib"])
-  compile(extra["okhttp"])
-  compile(extra["loggingInterceptor"])
-  compile(extra["adapterRxjava2"])
-  compile(extra["converterMoshi"])
-  compile(extra["moshiAdapters"])
-  compile(extra["retrofit"])
-  compile(extra["rxAndroid"])
-  compile(extra["rxJava"])
-  compile(extra["glide"])
-  compile(extra["okhttp3Integration"])
-  compile(extra["dagger"])
+  implementation(extra["design"])
+  implementation(extra["cardviewv7"])
+  implementation(extra["kotlinStdlib"])
+  implementation(extra["okhttp"])
+  implementation(extra["loggingInterceptor"])
+  implementation(extra["adapterRxjava2"])
+  implementation(extra["converterMoshi"])
+  implementation(extra["moshiAdapters"])
+  implementation(extra["retrofit"])
+  implementation(extra["rxAndroid"])
+  implementation(extra["rxJava"])
+  implementation(extra["glide"])
+  implementation(extra["okhttp3Integration"])
+  implementation(extra["dagger"])
 
   kapt(extra["daggerCompiler"])
   kapt(extra["glideCompiler"])
 
-  debugCompile(extra["leakcanaryAndroid"])
-  releaseCompile(extra["leakcanaryAndroidNoOp"])
+  debugImplementation(extra["leakcanaryAndroid"])
+  releaseImplementation(extra["leakcanaryAndroidNoOp"])
 
-  androidTestCompile(extra["junit"])
-  androidTestCompile(extra["assertjCore"])
-  androidTestCompile(extra["mockitoKotlin"] as String) { exclude(group = "net.bytebuddy") }     // DexMaker has it"s own MockMaker
-  androidTestCompile(extra["mockitoCore"] as String) { exclude(group = "net.bytebuddy") }       // DexMaker has it"s own MockMaker
-  androidTestCompile(extra["dexmakerMockito"] as String) { exclude(group = "net.bytebuddy") }   // DexMaker has it"s own MockMaker
-  androidTestCompile(extra["runner"])
-  androidTestCompile(extra["espressoCore"])
-  androidTestCompile(extra["espressoIntents"])
-  androidTestCompile(extra["espressoContrib"] as String) { exclude(group = "com.android.support") }
-  androidTestCompile(extra["mockwebserver"])
+  androidTestImplementation(extra["junit"])
+  androidTestImplementation(extra["assertjCore"])
+  androidTestImplementation(extra["mockitoKotlin"] as String) { exclude(group = "net.bytebuddy") }     // DexMaker has it"s own MockMaker
+  androidTestImplementation(extra["mockitoCore"] as String) { exclude(group = "net.bytebuddy") }       // DexMaker has it"s own MockMaker
+  androidTestImplementation(extra["dexmakerMockito"] as String) { exclude(group = "net.bytebuddy") }   // DexMaker has it"s own MockMaker
+  androidTestImplementation(extra["runner"])
+  androidTestImplementation(extra["espressoCore"])
+  androidTestImplementation(extra["espressoIntents"])
+  androidTestImplementation(extra["espressoContrib"] as String) { exclude(group = "com.android.support") }
+  androidTestImplementation(extra["mockwebserver"])
 
-  testCompile(extra["junit"])
-  testCompile(extra["assertjCore"])
-  testCompile(extra["mockitoKotlin"])
-  testCompile(extra["mockitoInline"])
-  testCompile(extra["leakcanaryAndroidNoOp"])
-  testCompile(extra["mockwebserver"])
-  testCompile(extra["equalsverifier"])
-  testCompile(extra["reflections"])
+  testImplementation(extra["junit"])
+  testImplementation(extra["assertjCore"])
+  testImplementation(extra["mockitoKotlin"])
+  testImplementation(extra["mockitoInline"])
+  testImplementation(extra["leakcanaryAndroidNoOp"])
+  testImplementation(extra["mockwebserver"])
+  testImplementation(extra["equalsverifier"])
+  testImplementation(extra["reflections"])
+}
+
+// TODO
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    jvmTarget = rootProject.extra["targetCompatibilityVersion"] as String
+  }
 }
